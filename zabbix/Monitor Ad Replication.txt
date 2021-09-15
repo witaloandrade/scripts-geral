@@ -1,0 +1,60 @@
+
+$tt=(Get-ADReplicationPartnerMetadata -target $env:COMPUTERNAME).LastReplicationResult;if($tt -gt 0){write-host("1")}else {write-host("0")}
+
+$rr=(Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor).LastSyncResult;if($rr -gt 0){write-host("1")}else {write-host("0")}
+
+
+$tt=(Get-ADReplicationPartnerMetadata -target $env:COMPUTERNAME).LastReplicationResult;if($tt -gt 0){write-host("1")}else {write-host("0")}
+
+
+system.run['c:\windows\System32\WindowsPowerShell\v1.0\powershell -c "Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor | select LastSyncResult | % {$_.LastSyncResult} | Measure -Sum  | Select-Object Sum | % {$_.Sum}"']
+
+system.run['c:\windows\System32\WindowsPowerShell\v1.0\powershell -c "(Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor | select -ExpandProperty LastSyncResult | measure-Object -Sum).sum"']
+
+system.run['powershell -c "(Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor | select -ExpandProperty LastSyncResult | measure -Sum).sum"']
+
+
+zabbix_get -s 1.1.1.1  -p 8000 -k system.run['powershell -c "Get-WmiObject -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor  | select LastSyncResult"']
+
+zabbix_get -s 1.1.1.1  -p 8000 -k system.run['powershell -c "$result=Get-WmiObject -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor  | select LastSyncResult | ForEach-Object {$_.LastSyncResult}; $result.Sum"']
+
+zabbix_get -s 1.1.1.1  -p 8000 -k system.run['powershell -c "$result=Get-WmiObject -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor  | select LastSyncResult | ForEach-Object {$_.LastSyncResult}; $result.Sum"']
+
+
+Get-WmiObject -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor  | select LastSyncResult 
+
+zabbix_get -s 1.1.1.1  -p 8000 -k system.run['powershell -c "Get-WmiObject -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor  | select LastSyncResult | ForEach-Object {$_.LastSyncResult}"']
+
+Write-Output ((repadmin /showrepl).toupper().replace("DSREPLICAGETINFO() FAILED WITH STATUS 8453 (0X2105):","") | select-string -pattern '(THE RPC SERVER IS UNAVALIABLE)|(FAILED)' | Measure-Object -line).lines
+
+>> Executar coleta com Zabbix Run, alarmar como high em caso de 5 coletas diferentes de "0", coletar a cada 15min.
+
+Item 01:
+Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor | select LastSyncResult | ForEach-Object {$_.LastSyncResult} | Measure-Object -Sum  | Select-Object Sum | ForEach-Object {$_.Sum} 
+
+Exemplo Ok:
+[root@zbxp09 ~]# zabbix_get -s 1.1.1.1  -p 8000 -k system.run['powershell -c "Get-WmiObject  -Namespace root/MicrosoftActiveDirectory -Class MSAD_ReplNeighbor | select LastSyncResult | ForEach-Object {$_.LastSyncResult} | Measure-Object -Sum  | Select-Object Sum | ForEach-Object {$_.Sum}"']
+0
+
+>>  Executar coleta com  perf_counter, alarmar como high em caso de 5 coletas diferentes de "0", coletar a cada 15min.
+Item 02:
+\DirectoryServices(NTDS)\DRA Pending Replication Synchronizations
+
+Exemplo de Ok:
+[root@zbxp09 ~]# zabbix_get -s 1.1.1.1  -p 8000 -k perf_counter["\DirectoryServices(NTDS)\DRA Pending Replication Synchronizations"]
+0.000000
+
+Item 03:
+\DirectoryServices(NTDS)\DRA Pending Replication Operations
+
+Exemplo de Ok:
+[root@zbxp09 ~]# zabbix_get -s 1.1.1.1  -p 8000 -k perf_counter["\DirectoryServices(NTDS)\DRA Pending Replication Operations"]
+0.000000
+
+Executar coleta com  perf_counter, apenas armazenar dados, não é necessário alarme, coletar a cada 15min.
+\DirectoryServices(NTDS)\DRA Sync Requests Made
+\DirectoryServices(NTDS)\DRA Sync Requests Successful
+
+
+
+

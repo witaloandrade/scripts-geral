@@ -1,0 +1,21 @@
+#!/bin/bash
+
+HOST1=`zabbix_get -s $1 -p $2 -k agent.hostname`
+echo "Executando set_time em $HOST1"
+
+echo "Baixando ScriptHora em $HOST1-$1"
+zabbix_get -s $1 -p $2 -k 'system.run[powershell -c Invoke-WebRequest -Uri http://tools.anysite.net/hora/ScriptHora_1.ps1 -OutFile C:/Windows/ScriptHora_1.ps1]'
+
+echo "Executando ScriptHora em $HOST1-$1"
+RES=`zabbix_get -s $1 -p $2 -k 'system.run[powershell -c C:/Windows/ScriptHora_1.ps1]' | grep "completed" | awk '{print $3}'`
+echo $RES
+
+if [ $RES == "completed" ]; then
+
+  echo $1:$2,$HOST1,OK >> /root/output.csv
+
+else
+
+  echo $1:$2,$HOST1,ERRO >> /root/output.csv
+
+fi

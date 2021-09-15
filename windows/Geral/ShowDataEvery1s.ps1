@@ -1,0 +1,1 @@
+while ($true) {get-date; start-sleep -seconds 1}

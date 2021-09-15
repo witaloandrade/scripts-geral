@@ -1,0 +1,1 @@
+﻿Get-ChildItem "E:\FTP"  -Recurse -File | Where CreationTime -lt  (Get-Date).AddDays(-7)  | Remove-Item -Force

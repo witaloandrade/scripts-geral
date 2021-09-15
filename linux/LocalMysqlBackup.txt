@@ -1,0 +1,5 @@
+mysqldump.exe --user=root --password=#!Pa55w.rd#!  --host=localhost --port=3306 --result-file="D:\wwwroot\Files\MysqlBackup\backup.%DATE:~0,2%_%DATE:~3,2%_%DATE:~6,4%_%TIME:~0,2%_%TIME:~3,2%_%TIME:~6,2%.sql" --default-character-set=utf8 --single-transaction=TRUE --databases "ituran_blog"
+
+EN
+
+mysqldump.exe --user=root --host=localhost --port=3306 --result-file="C:\MysqlBackup\backup.%DATE:~4,2%_%DATE:~7,2%_%DATE:~10,4%_%TIME:~0,2%_%TIME:~3,2%_%TIME:~6,2%.sql" --default-character-set=utf8 --single-transaction=TRUE --all-databases
